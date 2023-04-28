@@ -195,6 +195,41 @@
 			"item": [
 				{
 					"name": "Get projects",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has 'projects' key and the response is 200 ok\", function () {",
+									"    pm.response.to.have.status(200); // check if the response status code is 200 OK",
+									"",
+									"    pm.expect(pm.response.json()).to.have.property('projects').that.is.an('array'); // check if the response has a 'projects' key and it is an array",
+									"",
+									"});",
+									"",
+									"pm.test(\"Response project has the necessary fields and tasks fields\", function () {",
+									"    ",
+									"    var projects = pm.response.json().projects;",
+									"    pm.expect(projects).to.have.lengthOf.at.least(1); // check if the array has at least one project object",
+									"",
+									"    for (var i = 0; i < projects.length; i++) {",
+									"        pm.expect(projects[i]).to.be.an('object'); // check if each element of the array is an object",
+									"        pm.expect(projects[i]).to.have.property('name').that.is.a('string'); // check if each project object has a 'name' property that is a string",
+									"        pm.expect(projects[i]).to.have.property('tasks').that.is.an('array'); // check if each project object has a 'tasks' property that is an array",
+									"",
+									"        var tasks = projects[i].tasks;",
+									"        for (var j = 0; j < tasks.length; j++) {",
+									"            pm.expect(tasks[j]).to.be.an('object'); // check if each element of the tasks array is an object",
+									"            pm.expect(tasks[j]).to.have.property('name').that.is.a('string'); // check if each task object has a 'name' property that is a string",
+									"            pm.expect(tasks[j]).to.have.property('completed').that.is.a('boolean'); // check if each task object has a 'completed' property that is a boolean",
+									"        }",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -217,6 +252,30 @@
 				},
 				{
 					"name": "Create project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response matches expected JSON\", function () {",
+									"    pm.response.to.have.status(201);  // check if the response status code is 200 OK",
+									"",
+									"    var expectedJson = {",
+									"    \"name\": \"my new project\",",
+									"    \"tasks\": [",
+									"        {",
+									"            \"completed\": false,",
+									"            \"name\": \"my new task\"",
+									"        }",
+									"    ]",
+									"    };",
+									"    pm.expect(pm.response.json()).to.eql(expectedJson);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -279,11 +338,34 @@
 				},
 				{
 					"name": "Get Project by name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response matches expected JSON\", function () {",
+									"    pm.response.to.have.status(200);  // check if the response status code is 200 OK",
+									"    var expectedJson = {",
+									"    \"name\": \"my new project\",",
+									"    \"tasks\": [",
+									"        {",
+									"            \"completed\": false,",
+									"            \"name\": \"my new task\"",
+									"        }",
+									"    ]",
+									"    };",
+									"    pm.expect(pm.response.json()).to.eql(expectedJson);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:5000/project/my first project",
+							"raw": "http://127.0.0.1:5000/project/my new project",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -294,7 +376,7 @@
 							"port": "5000",
 							"path": [
 								"project",
-								"my first project"
+								"my new project"
 							]
 						}
 					},
@@ -302,6 +384,30 @@
 				},
 				{
 					"name": "Get all tasks in project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response has 'tasks' key and it is an array of objects representing tasks\", function () {",
+									"    pm.response.to.have.status(200); // check if the response status code is 200 OK",
+									"",
+									"    pm.expect(pm.response.json()).to.have.property('tasks').that.is.an('array'); // check if the response has a 'tasks' key and it is an array",
+									"",
+									"    var tasks = pm.response.json().tasks;",
+									"    pm.expect(tasks).to.have.lengthOf.at.least(1); // check if the array has at least one task object",
+									"",
+									"    for (var i = 0; i < tasks.length; i++) {",
+									"        pm.expect(tasks[i]).to.be.an('object'); // check if each element of the array is an object",
+									"        pm.expect(tasks[i]).to.have.property('name').that.is.a('string'); // check if each task object has a 'name' property that is a string",
+									"        pm.expect(tasks[i]).to.have.property('completed').that.is.a('boolean'); // check if each task object has a 'completed' property that is a boolean",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -354,14 +460,6 @@
 								"task"
 							]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "test",
-					"request": {
-						"method": "GET",
-						"header": []
 					},
 					"response": []
 				}
