@@ -18,7 +18,18 @@ def home():
 
 @app.route("/projects")
 def get_projects():
-  return jsonify({'projects': projects})
+  return jsonify({'projects': projects}), 200, {
+      # add Access-Control-Allow-Origin header
+      'Access-Control-Allow-Origin': 'http://127.0.0.1:8080'
+  }
+
+
+@app.route("/project", methods=['POST'])
+def create_project():
+  request_data = request.get_json()
+  new_project = {'name': request_data['name'], 'tasks': request_data['tasks']}
+  projects.append(new_project)
+  return jsonify(new_project), 201
 
 
 @app.route("/project/<string:name>")
@@ -52,5 +63,5 @@ def add_task_to_project(name):
           'completed': request_data['completed']
       }
       project['tasks'].append(new_task)
-      return jsonify(new_task)
+      return jsonify(new_task), 201
   return jsonify({'message': 'project not found'}), 404
